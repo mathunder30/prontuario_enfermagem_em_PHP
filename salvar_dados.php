@@ -9,6 +9,7 @@ include('conexao.php');
 
 // Salvar dados do paciente
 // Verifica se o formulário foi submetido (se o botão de submit foi clicado)
+// Executa o código se o método for POST, ou seja, se o formulário foi enviado
 if($_SERVER['REQUEST_METHOD'] == "POST"){
 
     // Coleta os dados enviados pelo formulário e armazena nas variáveis
