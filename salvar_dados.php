@@ -5,7 +5,7 @@
 session_start();
 
 // Inclui o arquivo que estabelece a conexão com o banco de dados
-include('conexao.php');
+include 'conexao.php';
 
 // Salvar dados do paciente
 // Verifica se o formulário foi submetido (se o botão de submit foi clicado)
@@ -27,37 +27,18 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
 
 
     // Executa a consulta SQL e verifica se foi bem-sucedida
-    if(mysqli_query($conn, $sql)){
-
-        // Armazena uma mensagem de sucesso na sessão
-        $_SESSION['mensagem'] = 'Paciente cadastrado com sucesso!';
-
-        // Armazena os dados do paciente na sessão para uso posterior
-        $_SESSION['dados_paciente'] = [
-            'nome' => $nome,
-            'data_de_nascimento' => $data_de_nascimento,
-            'idade' => $idade,
-            'genero' => $genero,
-            'cpf' => $cpf,
-            'telefone' => $telefone,
-            'endereco' => $endereco 
-        ];
-
-        // Redireciona para a página onde os dados do paciente serão exibidos
-        header('Location: exibir_paciente.php');
-        exit(); // Encerra o script após o redirecionamento
-    } else{
-        // Se houver um erro na execução da consulta, armazena uma mensagem de erro
-        $_SESSION['mensagem'] = 'Erro ao cadastrar o paciente: ' . mysqli_error($conn);
-
-        // Redireciona de volta para a página do formulário
-        header("Location: index.php");  
+    if ($conn->query($sql) === TRUE) {
+        $_SESSION['mensagem'] = "Paciente salvo com sucesso!";
+        header("Location: exibir_dados.php"); // Redireciona para a página de exibição
+        exit();
+    } else {
+        $_SESSION['mensagem'] = "Erro ao salvar o paciente: " . $conn->error;
+        header("Location: index.php"); // Redireciona para o formulário
         exit();
     }
-
-    mysqli_close($conn);  // Encerra o script após o redirecionamento
- 
-
 }
+
+// Fecha a conexão
+$conn->close();
 
 ?>

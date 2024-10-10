@@ -5,7 +5,7 @@
 
 $servername = "127.0.0.1";  // aqui ele esta definindo o nome do servidor no MySQL.
 $username = "root"; // Aqui ta pedindo o usuário do banco de dados, geralmente é "root" mesmo.
-$password = "aluno"; // Senha do Servidor 
+$password = "legal"; // Senha do Servidor 
 $dbname = "prontuario_medico"; // nome do banco de dados que queremos conectar
 
 // criando a conexão
