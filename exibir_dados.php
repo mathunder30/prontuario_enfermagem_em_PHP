@@ -1,55 +1,81 @@
 <?php
 session_start();
-include "conexao.php";
+include "conexao.php"; // Certifique-se de que esta conexão está funcionando corretamente
 
-// Consulta todos os pacientes
-$sql = "SELECT * FROM dados_pacientes";
-$result = $conn->query($sql);
-
-// Verifica se o paciente ID foi passado via sessão
-if (!isset($_SESSION['paciente_id'])) {
-    $_SESSION['mensagem'] = "Nenhum paciente encontrado!";
-    header("Location: index.php");
-    exit();
-}
-
-// Busca o ID do paciente na sessão
-$paciente_id = $_SESSION['paciente_id'];
-
-// Consulta SQL para pegar os dados do paciente
-$sql = "SELECT * FROM pacientes WHERE id = '$paciente_id'";
-$result = mysqli_query($conn, $sql);
-
-// Verifica se há resultados
-if (mysqli_num_rows($result) > 0) {
-    // Converte o resultado em um array associativo
-    $paciente = mysqli_fetch_assoc($result);
-} else {
-    $_SESSION['mensagem'] = "Paciente não encontrado!";
-    header("Location: index.php");
-    exit();
-}
-
-mysqli_close($conn);
 ?>
 
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dados do Paciente</title>
+    <title>Dados dos Pacientes</title>
 </head>
 <body>
-    <h1>Dados do Paciente</h1>
-    
-    <p><strong>Nome:</strong> <?php echo htmlspecialchars($paciente['nome']); ?></p>
-    <p><strong>Data de nascimento:</strong> <?php echo htmlspecialchars($paciente['data_de_nascimento']); ?></p>
-    <p><strong>Idade:</strong> <?php echo htmlspecialchars($paciente['idade']); ?></p>
-    <p><strong>Gênero:</strong> <?php echo htmlspecialchars($paciente['genero']); ?></p>
-    <p><strong>CPF:</strong> <?php echo htmlspecialchars($paciente['cpf']); ?></p>
-    <p><strong>Telefone:</strong> <?php echo htmlspecialchars($paciente['telefone']); ?></p>
-    <p><strong>Endereço:</strong> <?php echo htmlspecialchars($paciente['endereco']); ?></p>
-    <a href="index.php">Voltar ao início</a>
+<h2>Dados do Paciente</h2>
+<div id="dadosAluno">
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Data de Nascimento</th>
+            <th>Idade</th>
+            <th>Gênero</th>
+            <th>CPF</th>
+            <th>Telefone</th>
+            <th>Endereço</th>
+        </tr>
+    </div>
+    <form method="GET" action="exibir_dados.php">
+        <input type="text" name="nome" placeholder="Digite o nome do paciente">
+        <button type="submit">Buscar</button>
+    </form>
+
+<?php
+// Verifica se o parâmetro "nome" foi enviado
+if (isset($_GET['nome'])) {
+    $nome = $_GET['nome'];
+
+    // Consulta SQL para buscar o paciente cujo nome se parece com o digitado
+    $sql = "SELECT * FROM dados_pacientes WHERE nome LIKE ?";
+    $stmt = $conn->prepare($sql);
+
+    // Adiciona os percentuais para a busca parcial
+    $nome_param = "%" . $nome . "%";
+
+    // Vincula o parâmetro de busca
+    $stmt->bind_param("s", $nome_param);
+
+    // Executa a consulta
+    $stmt->execute();
+
+    // Obtém os resultados
+    $resultado = $stmt->get_result();
+
+    // Verifica se existem resultados
+    if ($resultado->num_rows > 0) {
+        // Saída dos dados de cada linha
+        while($row = $resultado->fetch_assoc()) {
+            echo "<tr>
+                    <td>" . $row["id"] . "</td>
+                    <td>" . $row["nome"] . "</td>
+                    <td>" . $row["data_de_nascimento"] . "</td>
+                    <td>" . $row["idade"] . "</td>
+                    <td>" . $row["genero"] . "</td>
+                    <td>" . $row["cpf"] . "</td>
+                    <td>" . $row["telefone"] . "</td>
+                    <td>" . $row["endereco"] . "</td>
+                  </tr>";
+        }
+    } else {
+        echo "<tr><td colspan='8'>Nenhum dado encontrado</td></tr>";
+    }
+}
+?>
+</table>
+
+<!-- Link para retornar à página inicial ou para salvar novos dados -->
+<a href="index.php">Adicionar Novo Paciente</a>
+
 </body>
 </html>

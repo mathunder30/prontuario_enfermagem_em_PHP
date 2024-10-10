@@ -16,9 +16,9 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 // O código verifica se houve um erro de conexão.
 // Se houver, a função `die()` para a execução do script e exibe a mensagem de erro
 
-if($conn -> connect_error){
+if($conn->connect_error){
 
-    die("Conexão falhou: " . $conn -> connect_error);
+    die("Conexão falhou: " . $conn->connect_error);
 }
 
 ?>

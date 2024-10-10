@@ -8,10 +8,8 @@ nome VARCHAR (100),
 data_de_nascimento timestamp default current_timestamp,
 idade int,
 genero varchar(10),
-cpf varchar(11),
-telefone int,
+cpf varchar(20),
+telefone varchar(15),
 endereco varchar(100)
 );
-
-
 
